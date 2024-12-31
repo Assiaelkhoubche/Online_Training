@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Online_training.Server", "Online_training.Server\Online_training.Server.csproj", "{30E7E97D-E8BD-49DD-A344-7DA4D1F8AC10}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "online_training.client", "online_training.client\online_training.client.esproj", "{5F16DF63-5F57-430D-B49D-B035CA74840E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{30E7E97D-E8BD-49DD-A344-7DA4D1F8AC10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30E7E97D-E8BD-49DD-A344-7DA4D1F8AC10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30E7E97D-E8BD-49DD-A344-7DA4D1F8AC10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30E7E97D-E8BD-49DD-A344-7DA4D1F8AC10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F16DF63-5F57-430D-B49D-B035CA74840E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F16DF63-5F57-430D-B49D-B035CA74840E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F16DF63-5F57-430D-B49D-B035CA74840E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{5F16DF63-5F57-430D-B49D-B035CA74840E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F16DF63-5F57-430D-B49D-B035CA74840E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F16DF63-5F57-430D-B49D-B035CA74840E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
