@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
+import axios from "axios"
+
+import {useAuth}  from "../Components/Authentication/AuthContext"
 
 function Login() {
 
@@ -11,34 +14,37 @@ function Login() {
 
     const navigate = useNavigate();
 
+    const { login } = useAuth();
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setMessage('');
 
+        const payload = {
+            email:email,
+            password:password
+        }
+
         try {
 
-            const response = await fetch(`/login`, {
-                method: 'POST',
+            const res = await axios.post("/login", payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    email,
-                    password,
-                   
+            })
 
+            if (res.status === 200) {
 
-                }),
-            }).then(result => {
-
-                setMessage("successful !");
+                
+                console.log(res.data);
+                login(res.data.userInfo);
+                setMessage("You are successely login!");
                 navigate("/");
-
-            });
+            }
 
         } catch (err) {
-            setError(err.message);
+            setError("Failed To login",err);
         }
     }
     
@@ -73,7 +79,7 @@ function Login() {
 
             {error && <div className="error">{error}</div>}
             {message && <div className="success">{message}</div>}
-            <p> Didn't have an account <Link to="/register">register</Link></p>
+            <p> Didn have an account <Link to="/register">register</Link></p>
         </div>
     );
 

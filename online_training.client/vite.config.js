@@ -58,7 +58,16 @@ export default defineConfig({
             '^/login': {
                 target,
                 secure: false
-            }
+            },
+            '^/logout': {
+                target,
+                secure: false
+            },
+            '^/edite-profile': {
+                target,
+                secure: false
+            },
+           
         },
         port: 56468,
         https: {

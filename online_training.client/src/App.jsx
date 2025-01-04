@@ -8,6 +8,9 @@ import NavBar from './Components/NavBar';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
 
+import Profile from './Pages/Profile';
+import EditProfile from './Pages/EditProfile';
+import RequestsAdmin from './Pages/RequestsAdmin';
 
 function App() {
     
@@ -21,6 +24,10 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/edite-profile" element={<EditProfile />} />
+                    <Route path="/requests-admin" element={<RequestsAdmin />} />
+
                 </Routes>
             </Router>
             

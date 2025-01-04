@@ -1,5 +1,6 @@
 import  { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from "axios"
 
 const Register = () => {
     const [email, setEmail] = useState('');
@@ -14,28 +15,28 @@ const Register = () => {
         setError('');
         setMessage('');
 
+        const payload = {
+            email: email,
+            userName: userName,
+            password: password
+        };
+
         try {
 
-            const response = await fetch(`/register`, {
-                method: 'POST',
+            const res = await axios.post("/register", payload, {
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json', 
                 },
-                body: JSON.stringify({
-                    email,
-                    password,
-                    userName
-
-
-                }),
-            }).then(result => {
-
-                setMessage("successful !");
-                navigate("/login");
             });
+
+            if (res.status === 200) {
+                setMessage("Successful creation!");
+                navigate("/login");
+            }
             
         } catch (err) {
-            setError(err.message);
+            setError(err.message || 'An error occurred');
+            console.log(err.response);
         }
     };
 
