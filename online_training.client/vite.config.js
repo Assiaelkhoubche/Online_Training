@@ -67,6 +67,10 @@ export default defineConfig({
                 target,
                 secure: false
             },
+            '^/add-category': {
+                target,
+                secure: false
+            },
            
         },
         port: 56468,

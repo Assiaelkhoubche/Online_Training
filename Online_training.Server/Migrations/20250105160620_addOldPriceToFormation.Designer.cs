@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Online_training.Server.Models;
 
@@ -11,9 +12,11 @@ using Online_training.Server.Models;
 namespace Online_training.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250105160620_addOldPriceToFormation")]
+    partial class addOldPriceToFormation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,8 +211,8 @@ namespace Online_training.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("oldPrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("oldPrice")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("sutudent")
                         .HasColumnType("int");
@@ -219,63 +222,6 @@ namespace Online_training.Server.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Formations");
-                });
-
-            modelBuilder.Entity("Online_training.Server.Models.Panier", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ParticipantId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PaymentIntentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("participantSecret")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParticipantId");
-
-                    b.ToTable("Paniers");
-                });
-
-            modelBuilder.Entity("Online_training.Server.Models.PanierItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DateAdded")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("DiscountAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("FormationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PanierId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormationId");
-
-                    b.HasIndex("PanierId");
-
-                    b.ToTable("PanierItems");
                 });
 
             modelBuilder.Entity("Online_training.Server.Models.Section", b =>
@@ -394,10 +340,6 @@ namespace Online_training.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("SectionId")
                         .HasColumnType("int");
 
@@ -495,36 +437,6 @@ namespace Online_training.Server.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Online_training.Server.Models.Panier", b =>
-                {
-                    b.HasOne("Online_training.Server.Models.Participant", "Participant")
-                        .WithMany()
-                        .HasForeignKey("ParticipantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Participant");
-                });
-
-            modelBuilder.Entity("Online_training.Server.Models.PanierItem", b =>
-                {
-                    b.HasOne("Online_training.Server.Models.Formation", "Formation")
-                        .WithMany()
-                        .HasForeignKey("FormationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Online_training.Server.Models.Panier", "Panier")
-                        .WithMany("PanierItems")
-                        .HasForeignKey("PanierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Formation");
-
-                    b.Navigation("Panier");
-                });
-
             modelBuilder.Entity("Online_training.Server.Models.Section", b =>
                 {
                     b.HasOne("Online_training.Server.Models.Formation", "Formation")
@@ -573,11 +485,6 @@ namespace Online_training.Server.Migrations
             modelBuilder.Entity("Online_training.Server.Models.Formation", b =>
                 {
                     b.Navigation("Sections");
-                });
-
-            modelBuilder.Entity("Online_training.Server.Models.Panier", b =>
-                {
-                    b.Navigation("PanierItems");
                 });
 
             modelBuilder.Entity("Online_training.Server.Models.Section", b =>

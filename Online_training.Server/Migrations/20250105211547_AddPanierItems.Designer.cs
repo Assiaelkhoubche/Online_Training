@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Online_training.Server.Models;
 
@@ -11,9 +12,11 @@ using Online_training.Server.Models;
 namespace Online_training.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250105211547_AddPanierItems")]
+    partial class AddPanierItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,19 +232,15 @@ namespace Online_training.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ParticipantId")
-                        .IsRequired()
+                    b.Property<int>("ParticipantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ParticipantId1")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PaymentIntentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("participantSecret")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParticipantId");
+                    b.HasIndex("ParticipantId1");
 
                     b.ToTable("Paniers");
                 });
@@ -394,10 +393,6 @@ namespace Online_training.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("SectionId")
                         .HasColumnType("int");
 
@@ -499,9 +494,7 @@ namespace Online_training.Server.Migrations
                 {
                     b.HasOne("Online_training.Server.Models.Participant", "Participant")
                         .WithMany()
-                        .HasForeignKey("ParticipantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ParticipantId1");
 
                     b.Navigation("Participant");
                 });
