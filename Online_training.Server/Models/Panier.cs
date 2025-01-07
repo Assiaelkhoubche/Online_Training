@@ -30,18 +30,34 @@ namespace Online_training.Server.Models
                 PanierItems.Add(new PanierItem { Formation = formation });
             }
         }
+        //public void RemoveCourseItem(int courseId)
+        //{
+        //    var course = PanierItems.FirstOrDefault(item => item.FormationId == courseId)!;
+        //    PanierItems.Remove(course);
+        //}
         public void RemoveCourseItem(int courseId)
         {
-            var course = PanierItems.FirstOrDefault(item => item.FormationId == courseId)!;
-            PanierItems.Remove(course);
+            var itemToRemove = PanierItems.FirstOrDefault(item => item.FormationId == courseId);
+            if (itemToRemove != null)
+            {
+                PanierItems.Remove(itemToRemove);
+            }
         }
-
+        public void RemoveItemsByCondition(Func<PanierItem, bool> condition)
+        {
+            var itemsToRemove = PanierItems.Where(condition).ToList();
+            foreach (var item in itemsToRemove)
+            {
+                PanierItems.Remove(item);
+            }
+        }
         public void ClearBasket()
         {
             PaymentIntentId = null;
             participantSecret = null;
             PanierItems.Clear();
         }
+        
 
     }
 }

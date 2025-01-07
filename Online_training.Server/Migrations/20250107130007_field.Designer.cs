@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Online_training.Server.Models;
 
@@ -11,9 +12,11 @@ using Online_training.Server.Models;
 namespace Online_training.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250107130007_field")]
+    partial class field
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -278,36 +281,6 @@ namespace Online_training.Server.Migrations
                     b.ToTable("PanierItems");
                 });
 
-            modelBuilder.Entity("Online_training.Server.Models.ParticipantFormation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("EnrollmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("FormationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ParticipantId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<double?>("Progress")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormationId");
-
-                    b.HasIndex("ParticipantId");
-
-                    b.ToTable("ParticipantFormations");
-                });
-
             modelBuilder.Entity("Online_training.Server.Models.Section", b =>
                 {
                     b.Property<int>("Id")
@@ -553,25 +526,6 @@ namespace Online_training.Server.Migrations
                     b.Navigation("Formation");
 
                     b.Navigation("Panier");
-                });
-
-            modelBuilder.Entity("Online_training.Server.Models.ParticipantFormation", b =>
-                {
-                    b.HasOne("Online_training.Server.Models.Formation", "Formation")
-                        .WithMany()
-                        .HasForeignKey("FormationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Online_training.Server.Models.Participant", "Participant")
-                        .WithMany()
-                        .HasForeignKey("ParticipantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Formation");
-
-                    b.Navigation("Participant");
                 });
 
             modelBuilder.Entity("Online_training.Server.Models.Section", b =>

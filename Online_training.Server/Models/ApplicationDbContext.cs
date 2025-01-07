@@ -17,6 +17,7 @@ namespace Online_training.Server.Models
         public DbSet<Category> Categories { get; set; }
         public DbSet<Video> Videos { get; set; }
         public DbSet<Section> Sections { get; set; }
+        public DbSet<ParticipantFormation> ParticipantFormations{ get; set; }
 
 
 
