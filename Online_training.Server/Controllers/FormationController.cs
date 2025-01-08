@@ -103,11 +103,18 @@ namespace Online_training.Server.Controllers
 
 
             var formations = await _context.Formations
+                                            .Include(pf=>pf.ParticipantFormations)
                                            .Include(f => f.Category)
                                            .Include(f => f.Sections)
-                                               .ThenInclude(s => s.Videos)
+                                            .ThenInclude(s => s.Videos)
                                            .Where(f => f.TrainerId.ToString() == trainerId)
                                            .ToListAsync();
+            foreach (var formation in formations)
+            {
+                await _context.Entry(formation)
+                    .Collection(f => f.ParticipantFormations)
+                    .LoadAsync();
+            }
 
             if (formations == null || formations.Count == 0)
             {
@@ -347,6 +354,59 @@ namespace Online_training.Server.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Formation deleted successfully" });
+        }
+
+
+        [HttpGet("Category/{id}")]
+        public async Task<ActionResult<IEnumerable<object>>> GetFormationsByCategory(int id)
+        {
+            // Fetch formations that belong to the specified category ID
+            var formations = await _context.Formations
+                .Where(f => f.CategoryId == id)
+                .Include(f => f.Category) // Include Category to access its properties
+                .Include(f => f.Sections)
+                    .ThenInclude(s => s.Videos)
+                .ToListAsync();
+
+            // Check if no formations were found
+            if (!formations.Any())
+            {
+                return NotFound(new { message = "No formations found for this category." });
+            }
+
+            // Project the formations into the desired DTO or anonymous object format
+            var result = formations.Select(f => new
+            {
+                f.Id,
+                f.Title,
+                f.ImageFormation,
+                f.Description,
+                f.Level,
+                f.Language,
+                f.students,
+                f.Price,
+                f.oldPrice,
+                f.CategoryId,
+                f.Rating,
+                Category = f.Category != null ? new { f.Category.Id, f.Category.Name } : null,
+                f.TrainerId,
+                Sections = f.Sections.Select(s => new
+                {
+                    s.Id,
+                    s.OrderIndex,
+                    s.IsPreview,
+                    s.Title,
+                    Videos = s.Videos.Select(v => new
+                    {
+                        v.Id,
+                        v.Link,
+                        v.ThumbnailLink,
+                        v.Duration
+                    })
+                })
+            });
+
+            return Ok(result);
         }
 
     }
