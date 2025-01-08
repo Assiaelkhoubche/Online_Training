@@ -16,10 +16,42 @@ namespace Online_training.Server.Models
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
         public string TrainerId { get; set; }
+        public Trainer? Trainer { get; set; }
 
         [JsonIgnore]
         public ICollection<Section> Sections { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<ParticipantFormation>? ParticipantFormations { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<Evaluation>? Evaluations { get; set; } = new List<Evaluation>();
 
-        
+        public decimal Rating
+        {
+            get
+            {
+                if (Evaluations == null || !Evaluations.Any())
+                {
+                    return 0; // Default rating if no evaluations exist
+                }
+
+                // Calculate the average rating
+                return Evaluations.Average(e => e.Rating);
+            }
+        }
+        public int students
+        {
+            get
+            {
+                if (ParticipantFormations == null || !ParticipantFormations.Any())
+                {
+                    return 0; // Default rating if no evaluations exist
+                }
+
+                // Calculate the average rating
+                return ParticipantFormations.Count();
+            }
+        }
+
+
     }
 }

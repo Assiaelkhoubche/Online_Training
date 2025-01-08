@@ -6,6 +6,7 @@ using Online_training.Server.Models;
 using Online_training.Server.Models.DTOs;
 using System.Security.Claims;
 using Humanizer;
+using iText.Commons.Actions.Contexts;
 
 namespace Online_training.Server.Controllers
 {
@@ -25,17 +26,68 @@ namespace Online_training.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<Formation>> GetAllFormation()
         {
-            var allFormations= _context.Formations
-                                        .Include(f=>f.Category)
-                                        .Include(f=>f.Sections)
-                                        .ThenInclude(s=>s.Videos)
-                                        .ToList();
-            if (allFormations == null)
+            var formations = await _context.Formations
+                                    .Include(pf => pf.ParticipantFormations)
+                                    .Include(f => f.Sections)           // Include Sections for each Formation
+                                    .ThenInclude(s => s.Videos)        // Include Videos for each Section
+                                    .ToListAsync();
+
+            if (formations == null || !formations.Any())
             {
-                return BadRequest(new { message = "No formation Founded" });
+                return NotFound("No formations found.");
             }
-            return Ok(allFormations);
-            
+
+            foreach (var formation in formations)
+            {
+                await _context.Entry(formation)
+                    .Collection(f => f.Evaluations)
+                    .LoadAsync();
+            }
+
+            //foreach (var formation in formations)
+            //{
+            //    await _context.Entry(formation)
+            //        .Collection(f => f.Evaluations)
+            //        .LoadAsync();
+            //}
+
+
+
+            // Project the data to return in the desired format
+            var result = formations.Select(f => new
+            {
+
+                f.Id,
+                f.Title,
+                f.ImageFormation,
+                f.Description,
+                f.Level,
+                f.Language,
+                f.students,
+                f.Price,
+                f.oldPrice,
+                f.CategoryId,
+                f.Rating,
+                Category = f.Category != null ? new { f.Category.Id, f.Category.Name } : null,  // Assuming Category has an Id and Name
+                f.TrainerId,
+                Sections = f.Sections.Select(s => new
+                {
+                    s.Id,
+                    s.OrderIndex,
+                    s.IsPreview,
+                    s.Title,
+                    Videos = s.Videos.Select(v => new
+                    {
+                        v.Id,
+                        v.Link,
+                        v.ThumbnailLink,
+                        v.Duration
+                    })
+                })
+            }).ToList();
+
+            return Ok(result);
+
         }
 
         [HttpGet("trainer")]
@@ -68,20 +120,32 @@ namespace Online_training.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CreateFormationDto>> GetFormation(int id)
         {
+            // Fetch participant ID from claims
+            var participantId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(participantId))
+            {
+                return Unauthorized(new { message = "Participant is not authorized." });
+            }
+
             // Fetch formation with related data
-            var formation = _context.Formations
-                                    .Include(f => f.Category)
-                                    .Include(f => f.Sections)
-                                    .ThenInclude(s => s.Videos)
-                                    .FirstOrDefault(f => f.Id == id);
+            var formation = await _context.Formations
+                                          .Include(f => f.Category)
+                                          .Include(f => f.Sections)
+                                          .ThenInclude(s => s.Videos)
+                                          .Include(f => f.ParticipantFormations) // Include ParticipantFormations
+                                          .FirstOrDefaultAsync(f => f.Id == id);
 
             if (formation == null)
             {
-                return BadRequest(new { message = "No formation found with these credentials" });
+                return NotFound(new { message = "No formation found with these credentials." });
             }
 
-            // Map formation data to DTO
-            var newFormation = new CreateFormationDto
+            // Fetch the participant's progress in the formation
+            var participantFormation = formation.ParticipantFormations
+                                                .FirstOrDefault(pf => pf.ParticipantId == participantId);
+
+            // Initialize the formation DTO
+            var newFormation = new CourseDto
             {
                 Title = formation.Title,
                 Description = formation.Description,
@@ -93,6 +157,7 @@ namespace Online_training.Server.Controllers
                 Sutudent = formation.sutudent,
                 CategoryId = formation.CategoryId,
                 TrainerId = formation.TrainerId,
+                progress = participantFormation?.Progress ?? 0, // Include participant progress
                 Category = new CategoryDto
                 {
                     Id = formation.Category?.Id ?? 0,
@@ -119,7 +184,7 @@ namespace Online_training.Server.Controllers
                         Name = video.Name,
                         Link = video.Link,
                         ThumbnailLink = video.ThumbnailLink,
-                        Duration = video.Duration // Example formatting
+                        Duration = video.Duration
                     };
 
                     newSection.Videos.Add(newVideo);
@@ -130,7 +195,6 @@ namespace Online_training.Server.Controllers
 
             return Ok(newFormation);
         }
-
         //POST
         [HttpPost]
        
